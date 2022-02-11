@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+    <title>Read Text File</title>
+    <style>
+.updrop {
+  color: #555;
+  font-weight: 700;
+  text-align: center;
+  padding: 50px 0;
+  border-radius: 10px;
+  border: 2px dashed #c9c9c9;
+}
+.updrop.highlight {
+ background:#ffff45;
+ border:2px dashed #ed2e2e
+}
+    </style>
+</head>
+  
+<body>
+  <div id="demo"></div> 
+  <pre id="output"></pre>
+      
+    <script type="text/javascript">
+function init (instance){
+  // (A1) FLAGS + CSS CLASS
+  instance.target.classList.add("upwrap");
+  instance.upqueue = []; // upload queue
+  instance.uplock = false; // uploading in progress
+ 
+  // (A2) DRAG-DROP HTML INTERFACE
+  instance.target.innerHTML =
+    `<div class="updrop">Drop Files Here To Upload.</div>
+     <div class="upstat"></div>`;
+  instance.hzone = instance.target.querySelector(".updrop");
+  instance.hstat = instance.target.querySelector(".upstat");
+ 
+  // (A3) HIGHLIGHT DROP ZONE ON DRAG ENTER
+  instance.hzone.ondragenter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    instance.hzone.classList.add("highlight");
+  };
+  instance.hzone.ondragleave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    instance.hzone.classList.remove("highlight");
+  };
+ 
+  // (A4) DROP TO UPLOAD FILE
+  instance.hzone.ondragover = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  instance.hzone.ondrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    instance.hzone.classList.remove("highlight");
+
+    var fr=new FileReader();
+    fr.onload=function(){
+        document.getElementById('output').textContent=fr.result;
+        debugger
+    }
+      
+    fr.readAsText(e.dataTransfer.files[0]);
+  };
+};
+
+init({
+  target : document.getElementById("demo"), // target html <div>
+  action : "dd-upload.php", // server-side upload handler
+  data : { key : "value" } // optional, extra post data
+});
+    </script>
+</body>
+  
+</html>
